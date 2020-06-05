@@ -54,6 +54,7 @@ def convert(file_name, output_name):
             if ref == note:
                 # Verwijder note; ref is hetzelfde.
                 remove_tag(relation, 'note')
+                mark_as_modified(relation)
                 continue
             if ref != None:
                 # Ref bestaat al, en wijkt af van note. Niets doen.
@@ -62,6 +63,7 @@ def convert(file_name, output_name):
                 # Note wordt ref.
                 set_tag(relation, 'ref', note)
                 remove_tag(relation, 'note')
+                mark_as_modified(relation)
                 continue
 
     tree.write(output_name)
@@ -95,12 +97,13 @@ def set_tag(primitive, name, value):
     tag.set('k', name)
     tag.set('v', value)
 
-
 def remove_tag(primitive, name):
     for tag in primitive.findall('tag'):
         if tag.get('k') == name:
             primitive.remove(tag)
 
+def mark_as_modified(primitive):
+    primitive.set('action', 'modify')
 
 def print_usage():
     print('Gebruik: note-to-ref.py check INPUT')
